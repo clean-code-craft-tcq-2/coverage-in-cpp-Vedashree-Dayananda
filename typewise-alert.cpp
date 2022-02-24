@@ -22,28 +22,36 @@ BreachType classifyTemperatureBreach(
 	return inferBreach(temperatureInC, TemperatureLimitsMap[coolingType].at(0), TemperatureLimitsMap[coolingType].at(1));
 }
 
-void checkAndAlert(
+AlertStatus checkAndAlert(
 	AlertTarget alertTarget, BatteryCharacter batteryChar, double temperatureInC) {
 
-  BreachType breachType = classifyTemperatureBreach(
-    batteryChar.coolingType, temperatureInC
-  );
+	AlertStatus result = ALERT_NOT_SENT;
+	
+	BreachType breachType = classifyTemperatureBreach(
+		batteryChar.coolingType, temperatureInC);
 
   funcptr breachSender = SenderFunctionFinder(alertTarget);
-  (*breachSender)(breachType);
+  result = (*breachSender)(breachType);
+  return result;
 }
 
-void sendToController(BreachType breachType) {
+AlertStatus sendToController(BreachType breachType) {
   const unsigned short header = 0xfeed;
+  AlertStatus result = ALERT_NOT_SENT;
   printf("%x : %x\n", header, breachType);
+  result = ALERT_SENT;
+  return result;
 }
 
-void sendToEmail(BreachType breachType) {
+AlertStatus sendToEmail(BreachType breachType) {
   const char* recepient = "a.b@c.com";
+  AlertStatus result = ALERT_NOT_REQUIRED;
   if (breachType != NORMAL)
   {
 	  const char* tempratureBreachMessage = TemperatureBreachMessageMap[breachType];
 	  printf("To: %s\n", recepient);
 	  printf("%s\n", tempratureBreachMessage);
+	  result = ALERT_SENT;
   }
+  return result;
 }
