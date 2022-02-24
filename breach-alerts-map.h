@@ -1,5 +1,5 @@
 #include <map>
-#include<vector>
+#include <vector>
 
 std::map < CoolingType, std::vector<int>> TemperatureLimitsMap = {
 	{ PASSIVE_COOLING, { 0, 35 } },
@@ -12,7 +12,7 @@ std::map < BreachType, const char*> TemperatureBreachMessageMap = {
 	{ TOO_HIGH, "the temperature is too high" }
 };
 
-using funcptr = void(*)(BreachType);
+using funcptr = AlertStatus(*)(BreachType);
 
 std::map < AlertTarget, funcptr > AlertTargetBreachSenderFunction = {
 	{ TO_CONTROLLER, sendToController },
